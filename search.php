@@ -13,9 +13,10 @@ $safe_search = mysqli_real_escape_string($con, $search);
 $error = [];
 
 if ($safe_search && $safe_search !== '') {
-    $sql_s = "SELECT post.id, name, description, image, category_name, tags FROM post"
+    $sql_s = "SELECT post.id, name, description, image, category_name, tag_name FROM post"
         . " JOIN categories ON categories.id = post.category_id"
-        . " WHERE MATCH(name, description, tags ) AGAINST(?)"
+        . " JOIN tags ON tags.id = post.tag_id"
+        . " WHERE MATCH(name, description) AGAINST(?)"
         . "ORDER BY creation_date DESC";
 
     $stmt = db_get_prepare_stmt($con, $sql_s, [$safe_search]);

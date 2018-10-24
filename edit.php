@@ -7,24 +7,29 @@ $sesUser = startTheSession();
 $sql = "SELECT id, category_name FROM categories";
 $sql_result = mysqli_query($con, $sql);
 $category_array = mysqli_fetch_all($sql_result, MYSQLI_ASSOC);
+//Подключение записей
+$sql_p = "SELECT post.id, name, image, category_name FROM post
+            JOIN categories ON categories.id = post.category_id
+            ORDER BY creation_date DESC";
+$sql_post_result = mysqli_query($con, $sql_p);
+$posts_array = mysqli_fetch_all($sql_post_result, MYSQLI_ASSOC);
+$id = intval($_GET['id']);
 //Подключение тэгов
 $sql = "SELECT id, tag_name FROM tags";
 $sql_result = mysqli_query($con, $sql);
 $tags_array = mysqli_fetch_all($sql_result, MYSQLI_ASSOC);
-
 //Запрос на добавление записи
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $lot = isset($_POST['lot']) ? $_POST['lot'] : null;
     $user_id = $_SESSION['user']['id'];
     $allowed_img_types = ['image/png', 'image/jpeg'];
 //Валидация
-    $required = ['name', 'category_id', 'description', 'tags'];
+    $required = ['name', 'category_id', 'description'];
     $dict = [
         'name' => 'Название записи',
         'category_id' => 'Категория записи',
         'description' => 'Описание записи',
         'image' => 'Ошибка загрузки изображения: ',
-        'tags' => 'Тэг'
     ];
     $valid_errors = [];
 
@@ -50,44 +55,40 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
 
-
-
     if (count($valid_errors) <= 0) {
         if (isset($lot['image'])) {
-            $sql_post = 'INSERT INTO post (creation_date, author_id, category_id, name, description,  image, tag_id ) VALUES (NOW(), ?, ?, ?, ?, ?, ?)';
+            $sql_post = "UPDATE post SET  author_id = ?, category_id = ?, name = ?, description = ?,  image = ?, tag_id = ?  WHERE id = '$id'";
             $stmt = db_get_prepare_stmt($con, $sql_post, [$user_id, $_POST['category_id'], $_POST['name'], $_POST['description'], $lot['image'], $_POST['tags']]);
             $res = mysqli_stmt_execute($stmt);
             if ($res) {
-                $post_id = mysqli_insert_id($con);
-                header("Location: post.php?id=" . $post_id);
+                header("Location: lot.php?id=" . $id);
             }
         } else {
-            $sql_post = 'INSERT INTO post (creation_date, author_id, category_id, name, description, tag_id) VALUES (NOW(), ?, ?, ?, ?, ?)';
+            $sql_post = "UPDATE post SET  author_id = ?, category_id = ?, name = ?, description = ?, tag_id = ?  WHERE id = '$id'";
             $stmt = db_get_prepare_stmt($con, $sql_post, [$user_id, $_POST['category_id'], $_POST['name'], $_POST['description'], $_POST['tags']]);
             $res = mysqli_stmt_execute($stmt);
             if ($res) {
                 $post_id = mysqli_insert_id($con);
-                header("Location: post.php?id=" . $post_id);
+                header("Location: lot.php?id=" . $post_id);
             }
 
         }
     }
 }
 
-$addLot_content = include_template ('add-post.php', [
+$addLot_content = include_template ('edit.php', [
     'valid_errors' => $valid_errors ?? [],
     'dict' => $dict ?? [],
-    'tags_array' => $tags_array,
-    'category_array' => $category_array
+    'id' => $id,
+    'category_array' => $category_array,
+    'tags_array' => $tags_array
 ]);
 $layout_content = include_template ('layout.php', [
     'content' => $addLot_content,
     'category_array' => $category_array,
     'username' => $sesUser['username'],
     'profile_img' => $sesUser['profile_img'],
-    'title' => 'Boradach - Добавление записи'
+    'title' => 'Boradach - Редактирование записи'
 ]);
 echo $layout_content;
 ?>
-
-

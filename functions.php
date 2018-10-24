@@ -74,7 +74,7 @@ function startTheSession() {
     return $sesUser;
 }
 /**
- * //Форматирование времени лота
+ * //Форматирование времени комментария
  * @param $time
  * @return string
  */
@@ -95,22 +95,7 @@ function formatComTime($time) {
         return $minutes . ' м. назад';
     }
 }
-/**
- * //Валидация добавления ставки
- * @param $con
- * @param $lot_id
- * @param $user_id
- * @return int
- */
-function allowedBet($con, $lot_id, $user_id) {
-    $allowed_sql = 'SELECT `id` FROM `bet`
-                    WHERE `lot_id` = ?
-                    AND `user_id` = ?';
-    $stmt = db_get_prepare_stmt($con, $allowed_sql, [$lot_id, $user_id]);
-    mysqli_stmt_execute($stmt);
-    mysqli_stmt_store_result($stmt);
-    return mysqli_stmt_num_rows($stmt);
-}
+
 
 error_reporting(E_ALL);
 ini_set('display_errors', 1);

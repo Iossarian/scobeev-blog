@@ -2,7 +2,7 @@
             <ul class="nav__list container">
                 <?php foreach ($category_array as $value) { ?>
                 <li class="nav__item">
-                    <a href="pages/all-lots.html"><?= $value['category_name']; ?></a>
+                    <a href="#"><?= $value['category_name']; ?></a>
                 </li>
                     <?php
                 }
@@ -61,9 +61,14 @@
                 <?php $classname = isset($valid_errors['tags']) ? "form__item--invalid" : "";
                 $value = isset($_POST['tags']) ? $_POST['tags'] : ""; ?>
                 <div class="form__item <?=$classname;?> form__item--small">
-                    <label for="lot-rate">Тэги поста (через запятую)</label>
-                    <input id="lot-rate"   name="tags" placeholder="Напишите тэги" value="<?=$value;?>" required>
-                    <span class="form__error">Введите тэги здесь</span>
+                    <label for="tag">Тэги</label>
+                    <select id="tag" name="tags"  required>
+                        <option  value="">Выберите тэги</option>
+                        <?php foreach ($tags_array as $value):?>
+                            <option <?=(isset($_POST['tags']) && $_POST['tags'] === $value['id'])?'selected':''?> value="<?=$value['id']?>"><?=$value['tag_name']?> </option>
+                        <?php endforeach; ?>
+                    </select>
+                    <span class="form__error">Выберите хотя бы один тэг</span>
                 </div>
             </div>
                     <?php if (!empty($valid_errors)): ?>

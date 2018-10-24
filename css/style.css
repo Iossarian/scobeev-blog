@@ -500,6 +500,7 @@ main.container {
 }
 
 .promo__item--boards .promo__link {
+  background-image: url("../img/category.png");
   background-position: 146px 8px;
 }
 
@@ -1089,6 +1090,7 @@ input:invalid .form__error{
   align-self: flex-end;
   padding: 15px 30px 20px;
   padding-top: 5px;
+  padding-bottom: 5px;
   height: 38px;
 }
 

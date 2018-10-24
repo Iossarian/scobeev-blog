@@ -29,8 +29,8 @@ CREATE TABLE `post` (
   `description` text NOT NULL,
   `image` text DEFAULT NULL,
   `author_id` int(11) NOT NULL,
-  `tags` text NOT NULL,
-  `category_id` int(11) NOT NULL
+  `category_id` int(11) NOT NULL,
+  `tag_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -56,7 +56,12 @@ CREATE TABLE `users` (
   `contacts` char(128) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
---
+-- Структура таблицы `tags`
+
+CREATE TABLE `tags` (
+  `id` int(11) NOT NULL,
+  `tag_name` text NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 -- Индексы сохранённых таблиц
 --
 
@@ -81,6 +86,10 @@ ALTER TABLE `users`
 ALTER TABLE `comments`
   ADD PRIMARY KEY (`id`);  
 
+-- Индексы таблицы `tags`
+--
+ALTER TABLE `tags`
+  ADD PRIMARY KEY (`id`);
 --
 -- AUTO_INCREMENT для сохранённых таблиц
 --
@@ -108,12 +117,19 @@ ALTER TABLE `users`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 COMMIT;
 
+-- AUTO_INCREMENT для таблицы `tags`
+--
+ALTER TABLE `tags`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
 ALTER TABLE `post`
   ADD CONSTRAINT `author_key` FOREIGN KEY (`author_id`) REFERENCES `users` (`id`),
-  ADD CONSTRAINT `category_id` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`);
+  ADD CONSTRAINT `category_id` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`),
+  ADD CONSTRAINT `tag_key` FOREIGN KEY (`tag_id`) REFERENCES `tags` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
   
 ALTER TABLE `comments`
   ADD CONSTRAINT `post_key` FOREIGN KEY (`post_id`) REFERENCES `post` (`id`),
   ADD CONSTRAINT `user_key` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);  
 
-  CREATE FULLTEXT INDEX lots_search ON post(name, description, tags)
+CREATE FULLTEXT INDEX lots_search ON post(name, description);
+CREATE FULLTEXT INDEX tags_search ON tags(tag_name) ;

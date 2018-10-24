@@ -15,8 +15,9 @@ $sql_post_result = mysqli_query($con, $sql_post);
 $posts_array = mysqli_fetch_all($sql_post_result, MYSQLI_ASSOC);
 //Подключение параметра запроса
 $id = intval($_GET['id']);
-$sql_l =    "SELECT post.id, name, image, category_name, description, tags FROM post "
+$sql_l =    "SELECT post.id, name, image, category_name, description, tag_name, author_id FROM post "
             . "JOIN categories ON categories.id = post.category_id "
+            . "JOIN tags ON tags.id = post.tag_id "
             . "WHERE post.id = " .$id;
 
 if ($result = mysqli_query($con, $sql_l)) {
@@ -58,16 +59,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             header("Location: lot.php?id=" . $id);
             exit();
         }
+    } elseif (isset($_POST['del'])) {
+        $sql = "DELETE FROM post WHERE id = '$id'";
+        $res = mysqli_query($con, $sql);
+        if ($res) {
+            header("Location: index.php");
+            exit();
+        }
+    } elseif (isset($_POST['edit'])) {
+        header("Location: edit.php?id=" . $id);
     } else {
         $error['com'] = 'Введите комментарий';
     }
-    if (isset($_POST['del'])) {
-        $sql = 'DELETE * FROM post WHERE id = "' .$id. '";';
-        $res = mysqli_query ($con, $sql);
-    }
-}d
 
-$lot_content = include_template ('lot.php', [
+}
+$lot_content = include_template ('post.php', [
     'category_array' => $category_array,
     'posts_array' => $posts_array,
     'post' => $post ?? [],

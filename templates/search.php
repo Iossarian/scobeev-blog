@@ -26,10 +26,9 @@
                         <div class="lot__state">
                             <div class="lot__rate">
                                 <span class="lot__amount">Тэги</span>
-                                <span class="lot__cost"><?= htmlspecialchars($value['tags']); ?></span>
+                                <span class="lot__cost"><?= htmlspecialchars($value['tag_name']); ?></span>
                             </div>
-                            <div class="lot__timer timer">
-                            </div>
+
                         </div>
                     </div>
                 </li>

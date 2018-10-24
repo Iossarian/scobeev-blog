@@ -2,7 +2,7 @@
     <ul class="nav__list container">
         <?php foreach ($category_array as $value) { ?>
             <li class="nav__item">
-                <a href="all-lots.php"> <?=$value['category_name']; ?> </a>
+                <a href="#"> <?=$value['category_name']; ?> </a>
             </li>
             <?php
         }
@@ -13,25 +13,30 @@
       <h2><?= htmlspecialchars($post['name']); ?></h2>
       <div class="lot-item__content">
         <div class="lot-item__left">
+            <?php if(isset($post['image'])): ?>
           <div class="lot-item__image">
             <img src="<?= htmlspecialchars($post['image']); ?>" width="730" height="548" alt="Сноуборд">
           </div>
+            <?php endif; ?>
           <p class="lot-item__category">Категория: <span><?= htmlspecialchars($post['category_name']); ?></span></p>
           <p class="lot-item__description"><?= htmlspecialchars($post['description']); ?></p>
             <p class="lot-item__category">Тэги: <span></span></p>
-            <p class="lot-item__description"><?= htmlspecialchars($post['tags']); ?></p>
+            <p class="lot-item__description"><?= htmlspecialchars($post['tag_name']); ?></p>
         </div>
         <div class="lot-item__right">
 
           <div class="lot-item__state">
               <?php if(isset($_SESSION['user'])): ?>
-            <form class="lot-item__form" action="../lot.php?id=<?=$id;?>" method="post">
+            <form class="lot-item__form" action="../post.php?id=<?=$id;?>" method="post">
                 <?php $classname = isset($error['com']) ? "--invalid" : "";?>
               <p class="lot-item__form-item <?=$classname;?>">
                 <label for="com">Ваш комментарий</label>
                   <textarea name="com" id="com" cols="33" rows="8"></textarea>
                   <button type="submit" class="button">Комментировать</button>
+                  <?php if($post['author_id'] === $_SESSION['user']['id']): ?>
                   <button type="submit" name="del" class="button">Удалить пост</button>
+                      <button type="submit" name="edit" class="button">Редактировать пост</button>
+                  <?php endif; ?>
               </p>
             </form>
               <?php endif; ?>
